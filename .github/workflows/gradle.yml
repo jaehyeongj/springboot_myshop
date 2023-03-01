@@ -1,44 +1,42 @@
-
-
-# 본인이 설정한 값을 여기서 채워넣습니다.
-# 리전, 버킷 이름, CodeDeploy 앱 이름, CodeDeploy 배포 그룹 이름
-env:
-  AWS_REGION: ap-northeast-2
-  S3_BUCKET_NAME: game-matching
-  CODE_DEPLOY_APPLICATION_NAME: my-codedeploy-app
-  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: my-codedeploy-group
-
-
-name: Spring Boot & Gradle CI/CD 
+name: Deploy to Amazon EC2
 
 on:
   push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+    branches:
+      - main
+
+env:
+  AWS_REGION: ap-northeast-2
+  S3_BUCKET_NAME: my-github-actions-s3-bucket
+  CODE_DEPLOY_APPLICATION_NAME: my-codedeploy-app
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: my-codedeploy-deployment-group
 
 permissions:
   contents: read
 
 jobs:
-  build:
-
+  deploy:
+    name: Deploy
     runs-on: ubuntu-latest
+    environment: production
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up JDK 17
+    # (1) 기본 체크아웃
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    # (2) JDK 11 세팅
+    - name: Set up JDK 11
       uses: actions/setup-java@v3
       with:
-        java-version: '17'
         distribution: 'temurin'
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
+        java-version: '11'
+
+    # (3) Gradle build (Test 제외)
     - name: Build with Gradle
-      # uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
-      # with:
-        # arguments: build
-      run : ./gradlew clean build --exclude-task test
+      uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
+      with:
+        arguments: clean build -x test
 
     # (4) AWS 인증 (IAM 사용자 Access Key, Secret Key 활용)
     - name: Configure AWS credentials
@@ -56,7 +54,6 @@ jobs:
           --ignore-hidden-files \
           --s3-location s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip \
           --source .
-
     # (6) S3 버킷에 있는 파일을 대상으로 CodeDeploy 실행
     - name: Deploy to AWS EC2 from S3
       run: |
