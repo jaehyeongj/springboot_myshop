@@ -83,6 +83,10 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+configurations {
+    querydsl.extendsFrom compileClasspath
+}
+
 compileQuerydsl {
     options.annotationProcessorPath = configurations.querydsl
 }
