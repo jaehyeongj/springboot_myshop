@@ -83,6 +83,21 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+// querydsl QEntity build 위치 설정
+def generatedSourcesDir = "$buildDir/generated/querydsl"
+
+querydsl {
+
+    generatedSourcesDir = generatedSourcesDir
+}
+
+sourceSets {
+    main.java.srcDir generatedSourcesDir
+}
+
+configurations {
+    querydsl.extendsFrom compileClasspath
+}
 
 compileQuerydsl {
     options.annotationProcessorPath = configurations.querydsl
