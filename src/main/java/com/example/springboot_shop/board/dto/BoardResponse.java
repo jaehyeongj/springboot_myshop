@@ -22,13 +22,12 @@ public class BoardResponse {
     private final LocalDateTime modifiedAt;
 
 
-    public BoardResponse(Board board, List<CommentResponse> comments, Long likeCount) {
+    public BoardResponse(Board board, Long likeCount) {
         this.id = board.getId();
         this.nickname = board.getMember().getProfile().getNickname();
         this.memberImage = board.getMember().getProfile().getProfileImage();
         this.boardImage = board.getBoardImage();
         this.content = board.getContent();
-        this.comments = comments;
         this.likeCount = likeCount;
         this.createAt = board.getCreatedAt();
         this.modifiedAt = board.getModifiedAt();
