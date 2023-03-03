@@ -108,6 +108,16 @@ configurations {
     querydsl.extendsFrom compileClasspath
 }
 
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-parameters"
+}
+
+task deletePlainJar(type: Delete) {
+    delete "${buildDir}/libs/${rootProject.name}-${version}-plain.jar"
+}
+
+build.dependsOn(deletePlainJar)
+
 compileQuerydsl {
     options.annotationProcessorPath = configurations.querydsl
 }
