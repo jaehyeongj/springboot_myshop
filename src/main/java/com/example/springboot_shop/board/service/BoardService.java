@@ -86,16 +86,16 @@ public class BoardService {
         return pageable;
     }
 
-//    //게시글 검색
-//    public List<BoardResponse> searchBoard(String searchName) {
-//        List<Board> boardList = boardRepository.searchBoard(searchName);
-//        List<BoardResponse> boardResponseList = new ArrayList<>();
-//        for (Board board : boardList) {
-//            Long likeCount = likeRepository.countByBoardId(board.getId());
-//            boardResponseList.add(new BoardResponse(board,likeCount));
-//        }
-//        return boardResponseList;
-//    }
+    //게시글 검색
+    public List<BoardResponse> searchBoard(String searchName) {
+        List<Board> boardList = boardRepository.searchBoard(searchName);
+        List<BoardResponse> boardResponseList = new ArrayList<>();
+        for (Board board : boardList) {
+            Long likeCount = likeRepository.countByBoardId(board.getId());
+            boardResponseList.add(new BoardResponse(board,likeCount));
+        }
+        return boardResponseList;
+    }
 
     public BoardResponse getBoard(Long boardId) {
         Board board = boardRepository.findById(boardId).orElseThrow(()-> new IllegalArgumentException(""));
